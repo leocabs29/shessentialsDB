@@ -7,23 +7,16 @@ import expenseRoutes from "./routes/expenseRoutes.js";
 dotenv.config();
 
 const app = express();
-
-// Middlewares
 app.use(cors());
 app.use(express.json());
-
-// Routes
 app.use("/api/expenses", expenseRoutes);
 
-// Test route
 app.get("/", (req, res) => {
   res.send("✅ Backend is running!");
 });
 
-// Connect MongoDB
 const connectDB = async () => {
   try {
-    console.log("Connecting to MongoDB...");
     await mongoose.connect(process.env.MONGO_URI, {
       dbName: "ShessentialsDB",
     });
@@ -36,6 +29,9 @@ const connectDB = async () => {
 connectDB();
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+}
 
+// Required for Vercel
 export default app;
