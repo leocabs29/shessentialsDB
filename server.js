@@ -8,46 +8,40 @@ dotenv.config();
 
 const app = express();
 
-// === MIDDLEWARE LOGGING ===
-console.log("🟡 Initializing server...");
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-console.log("🟢 Middleware loaded successfully.");
-
-// === ROUTES ===
+// Routes
 app.use("/api/expenses", expenseRoutes);
+
+// Root endpoint (for quick check)
 app.get("/", (req, res) => {
-  console.log("📩 Received GET request at '/'");
-  res.send("✅ Backend is running!");
+  res.send("✅ Shessentials Backend is running and connected!");
 });
 
-// === DATABASE CONNECTION ===
+// MongoDB connection
 const connectDB = async () => {
+  const uri = process.env.MONGO_URI;
+  console.log("🔍 Connecting to MongoDB URI:", uri ? "Loaded from .env" : "Missing");
+
   try {
-    console.log("🔗 Connecting to MongoDB...");
-    console.log("📁 Database Name:", "ShessentialsDB");
-    console.log("🌍 Mongo URI:", process.env.MONGO_URI ? "Loaded ✅" : "❌ MONGO_URI missing!");
-    
-    await mongoose.connect(process.env.MONGO_URI, {
+    const conn = await mongoose.connect(uri, {
       dbName: "ShessentialsDB",
     });
-    
-    console.log("✅ MongoDB connected successfully!");
+    console.log(`✅ MongoDB connected successfully to database: ${conn.connection.name}`);
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
+    console.error("❌ MongoDB connection error:", error.message);
   }
 };
 
 connectDB();
 
-// === SERVER STARTUP ===
+// For local development only
 const PORT = process.env.PORT || 5000;
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => console.log(`🚀 Server running locally on port ${PORT}`));
-} else {
-  console.log("🌐 Running in production mode (Vercel).");
 }
 
-// === VERCEL EXPORT ===
+// Required for Vercel serverless functions
 export default app;
