@@ -30,7 +30,7 @@ const expenseSchema = new mongoose.Schema({
 });
 
 // ✅ Define model properly (3rd arg = actual collection name in MongoDB)
-const Expense = mongoose.model("Expense", expenseSchema, "Expenses");
+const Expense = mongoose.model("Expenses", expenseSchema, "Expenses");
 
 // ✅ ROUTES
 
