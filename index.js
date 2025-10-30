@@ -1,7 +1,7 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,7 +29,7 @@ const expenseSchema = new mongoose.Schema({
   attachmentUrl: { type: String }
 });
 
-// ✅ Define model properly (3rd arg = actual collection name in MongoDB)
+// ✅ Define model
 const Expense = mongoose.model("Expenses", expenseSchema, "Expenses");
 
 // ✅ ROUTES
@@ -68,9 +68,12 @@ app.get('/', (req, res) => {
   res.send('✅ Shessentials Backend is running!');
 });
 
-// Start local server (for development)
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
-}
+// ✅ Start server (always listen, for Render and local)
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('Local development mode');
+  }
+});
 
-module.exports = app; // ✅ For Vercel
+module.exports = app; // ✅ Export app for serverless or tests
